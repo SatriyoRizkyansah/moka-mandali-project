@@ -3,130 +3,193 @@
     <head>
         @include('partials.head')
     </head>
-    <body class="min-h-screen bg-white dark:bg-zinc-800">
-        <flux:sidebar sticky stashable class="border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
-            <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
+    <body class="min-h-screen bg-gray-50 dark:bg-gray-900" 
+          x-data="{ sidebarOpen: false }">
+        <div class="flex h-screen">
+            <!-- Sidebar -->
+            <div class="fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transform transition-transform duration-300 lg:translate-x-0"
+                 :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'">
+                
+                <!-- Sidebar Header -->
+                <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+                    <a href="{{ route('dashboard') }}" class="flex items-center space-x-2" wire:navigate>
+                        <x-app-logo />
+                    </a>
+                    <button @click="sidebarOpen = false" class="lg:hidden p-1 rounded-lg text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <x-icons.x-mark />
+                    </button>
+                </div>
 
-            <a href="{{ route('dashboard') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" wire:navigate>
-                <x-app-logo />
-            </a>
+                <!-- Navigation -->
+                <div class="flex flex-col h-full">
+                    <nav class="flex-1 px-4 py-6 space-y-2">
+                        <!-- Platform Section -->
+                        <div class="mb-6">
+                            <h3 class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
+                                {{ __('Platform') }}
+                            </h3>
+                            <a href="{{ route('dashboard') }}" 
+                               class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}"
+                               wire:navigate>
+                                <x-icons.home class="mr-3" />
+                                {{ __('Dashboard') }}
+                            </a>
+                        </div>
 
-            <flux:navlist variant="outline">
-                <flux:navlist.group :heading="__('Platform')" class="grid">
-                    <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
-                </flux:navlist.group>
-            </flux:navlist>
+                        <!-- Spacer -->
+                        <div class="flex-1"></div>
 
-            <flux:spacer />
+                        <!-- External Links -->
+                        <div class="space-y-2 pt-6 border-t border-gray-200 dark:border-gray-700">
+                            <a href="https://github.com/laravel/livewire-starter-kit" 
+                               target="_blank"
+                               class="nav-item">
+                                <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                                </svg>
+                                {{ __('Repository') }}
+                            </a>
+                            <a href="https://laravel.com/docs/starter-kits#livewire" 
+                               target="_blank"
+                               class="nav-item">
+                                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                                </svg>
+                                {{ __('Documentation') }}
+                            </a>
+                        </div>
+                    </nav>
 
-            <flux:navlist variant="outline">
-                <flux:navlist.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
-                {{ __('Repository') }}
-                </flux:navlist.item>
-
-                <flux:navlist.item icon="book-open-text" href="https://laravel.com/docs/starter-kits#livewire" target="_blank">
-                {{ __('Documentation') }}
-                </flux:navlist.item>
-            </flux:navlist>
-
-            <!-- Desktop User Menu -->
-            <flux:dropdown class="hidden lg:block" position="bottom" align="start">
-                <flux:profile
-                    :name="auth()->user()->name"
-                    :initials="auth()->user()->initials()"
-                    icon:trailing="chevrons-up-down"
-                />
-
-                <flux:menu class="w-[220px]">
-                    <flux:menu.radio.group>
-                        <div class="p-0 text-sm font-normal">
-                            <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
-                                <span class="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-lg">
-                                    <span
-                                        class="flex h-full w-full items-center justify-center rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white"
-                                    >
+                    <!-- Desktop User Menu -->
+                    <div class="hidden lg:block p-4 border-t border-gray-200 dark:border-gray-700">
+                        <div x-data="{ userMenuOpen: false }" class="relative">
+                            <button @click="userMenuOpen = !userMenuOpen" 
+                                    class="w-full flex items-center justify-between p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-8 h-8 bg-primary-100 dark:bg-primary-900 rounded-lg flex items-center justify-center text-primary-700 dark:text-primary-300 font-semibold">
                                         {{ auth()->user()->initials() }}
-                                    </span>
-                                </span>
+                                    </div>
+                                    <div class="text-left">
+                                        <div class="font-medium text-gray-900 dark:text-white text-sm">{{ auth()->user()->name }}</div>
+                                        <div class="text-xs text-gray-500 dark:text-gray-400">{{ auth()->user()->email }}</div>
+                                    </div>
+                                </div>
+                                <x-icons.chevron-down class="text-gray-400" />
+                            </button>
 
-                                <div class="grid flex-1 text-start text-sm leading-tight">
-                                    <span class="truncate font-semibold">{{ auth()->user()->name }}</span>
-                                    <span class="truncate text-xs">{{ auth()->user()->email }}</span>
+                            <!-- User Dropdown -->
+                            <div x-show="userMenuOpen" 
+                                 @click.away="userMenuOpen = false"
+                                 x-transition:enter="transition ease-out duration-100"
+                                 x-transition:enter-start="transform opacity-0 scale-95"
+                                 x-transition:enter-end="transform opacity-100 scale-100"
+                                 x-transition:leave="transition ease-in duration-75"
+                                 x-transition:leave-start="transform opacity-100 scale-100"
+                                 x-transition:leave-end="transform opacity-0 scale-95"
+                                 class="absolute bottom-full left-0 right-0 mb-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2">
+                                
+                                <a href="{{ route('settings.profile') }}" 
+                                   wire:navigate
+                                   class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                    <x-icons.cog class="mr-3" />
+                                    {{ __('Settings') }}
+                                </a>
+                                
+                                <div class="border-t border-gray-200 dark:border-gray-700 my-1"></div>
+                                
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit" 
+                                            class="w-full flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 text-left">
+                                        <x-icons.logout class="mr-3" />
+                                        {{ __('Log Out') }}
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="flex-1 lg:ml-64">
+                <!-- Mobile Header -->
+                <header class="lg:hidden bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3">
+                    <div class="flex items-center justify-between">
+                        <button @click="sidebarOpen = true" 
+                                class="p-2 rounded-lg text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700">
+                            <x-icons.bars-2 />
+                        </button>
+                        
+                        <div class="flex items-center space-x-3">
+                            <x-dark-mode-toggle />
+                            
+                            <div x-data="{ mobileUserMenuOpen: false }" class="relative">
+                                <button @click="mobileUserMenuOpen = !mobileUserMenuOpen" 
+                                        class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                                    <div class="w-8 h-8 bg-primary-100 dark:bg-primary-900 rounded-lg flex items-center justify-center text-primary-700 dark:text-primary-300 font-semibold">
+                                        {{ auth()->user()->initials() }}
+                                    </div>
+                                    <x-icons.chevron-down class="text-gray-400" />
+                                </button>
+
+                                <!-- Mobile User Dropdown -->
+                                <div x-show="mobileUserMenuOpen" 
+                                     @click.away="mobileUserMenuOpen = false"
+                                     x-transition:enter="transition ease-out duration-100"
+                                     x-transition:enter-start="transform opacity-0 scale-95"
+                                     x-transition:enter-end="transform opacity-100 scale-100"
+                                     x-transition:leave="transition ease-in duration-75"
+                                     x-transition:leave-start="transform opacity-100 scale-100"
+                                     x-transition:leave-end="transform opacity-0 scale-95"
+                                     class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2">
+                                    
+                                    <div class="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
+                                        <div class="font-medium text-gray-900 dark:text-white text-sm">{{ auth()->user()->name }}</div>
+                                        <div class="text-xs text-gray-500 dark:text-gray-400">{{ auth()->user()->email }}</div>
+                                    </div>
+                                    
+                                    <a href="{{ route('settings.profile') }}" 
+                                       wire:navigate
+                                       class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                        <x-icons.cog class="mr-3" />
+                                        {{ __('Settings') }}
+                                    </a>
+                                    
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+                                        <button type="submit" 
+                                                class="w-full flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 text-left">
+                                            <x-icons.logout class="mr-3" />
+                                            {{ __('Log Out') }}
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
-                    </flux:menu.radio.group>
+                    </div>
+                </header>
 
-                    <flux:menu.separator />
+                <!-- Desktop Dark Mode Toggle -->
+                <div class="hidden lg:block fixed top-4 right-4 z-40">
+                    <x-dark-mode-toggle />
+                </div>
 
-                    <flux:menu.radio.group>
-                        <flux:menu.item :href="route('settings.profile')" icon="cog" wire:navigate>{{ __('Settings') }}</flux:menu.item>
-                    </flux:menu.radio.group>
+                {{ $slot }}
+            </div>
+        </div>
 
-                    <flux:menu.separator />
-
-                    <form method="POST" action="{{ route('logout') }}" class="w-full">
-                        @csrf
-                        <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full">
-                            {{ __('Log Out') }}
-                        </flux:menu.item>
-                    </form>
-                </flux:menu>
-            </flux:dropdown>
-        </flux:sidebar>
-
-        <!-- Mobile User Menu -->
-        <flux:header class="lg:hidden">
-            <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
-
-            <flux:spacer />
-
-            <flux:dropdown position="top" align="end">
-                <flux:profile
-                    :initials="auth()->user()->initials()"
-                    icon-trailing="chevron-down"
-                />
-
-                <flux:menu>
-                    <flux:menu.radio.group>
-                        <div class="p-0 text-sm font-normal">
-                            <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
-                                <span class="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-lg">
-                                    <span
-                                        class="flex h-full w-full items-center justify-center rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white"
-                                    >
-                                        {{ auth()->user()->initials() }}
-                                    </span>
-                                </span>
-
-                                <div class="grid flex-1 text-start text-sm leading-tight">
-                                    <span class="truncate font-semibold">{{ auth()->user()->name }}</span>
-                                    <span class="truncate text-xs">{{ auth()->user()->email }}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </flux:menu.radio.group>
-
-                    <flux:menu.separator />
-
-                    <flux:menu.radio.group>
-                        <flux:menu.item :href="route('settings.profile')" icon="cog" wire:navigate>{{ __('Settings') }}</flux:menu.item>
-                    </flux:menu.radio.group>
-
-                    <flux:menu.separator />
-
-                    <form method="POST" action="{{ route('logout') }}" class="w-full">
-                        @csrf
-                        <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full">
-                            {{ __('Log Out') }}
-                        </flux:menu.item>
-                    </form>
-                </flux:menu>
-            </flux:dropdown>
-        </flux:header>
-
-        {{ $slot }}
-
-        @fluxScripts
+        <!-- Sidebar Overlay for Mobile -->
+        <div x-show="sidebarOpen" 
+             @click="sidebarOpen = false"
+             x-transition:enter="transition-opacity ease-linear duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition-opacity ease-linear duration-300"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             class="lg:hidden fixed inset-0 z-40 bg-black bg-opacity-50"></div>
+             
+        @livewireScripts
     </body>
 </html>

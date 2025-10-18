@@ -1,38 +1,71 @@
+@layout('components.layouts.app')
+
 <section class="w-full">
     @include('partials.settings-heading')
 
     <x-settings.layout :heading="__('Profile')" :subheading="__('Update your name and email address')">
         <form wire:submit="updateProfileInformation" class="my-6 w-full space-y-6">
-            <flux:input wire:model="name" :label="__('Name')" type="text" required autofocus autocomplete="name" />
+            <div>
+                <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    {{ __('Name') }}
+                </label>
+                <input
+                    id="name"
+                    wire:model="name"
+                    type="text"
+                    required
+                    autofocus
+                    autocomplete="name"
+                    class="input-field @error('name') border-red-300 dark:border-red-600 @enderror"
+                />
+                @error('name')
+                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                @enderror
+            </div>
 
             <div>
-                <flux:input wire:model="email" :label="__('Email')" type="email" required autocomplete="email" />
+                <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    {{ __('Email') }}
+                </label>
+                <input
+                    id="email"
+                    wire:model="email"
+                    type="email"
+                    required
+                    autocomplete="email"
+                    class="input-field @error('email') border-red-300 dark:border-red-600 @enderror"
+                />
+                @error('email')
+                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                @enderror
 
                 @if (auth()->user() instanceof \Illuminate\Contracts\Auth\MustVerifyEmail &&! auth()->user()->hasVerifiedEmail())
-                    <div>
-                        <flux:text class="mt-4">
+                    <div class="mt-4">
+                        <p class="text-sm text-gray-600 dark:text-gray-400">
                             {{ __('Your email address is unverified.') }}
 
-                            <flux:link class="text-sm cursor-pointer" wire:click.prevent="resendVerificationNotification">
+                            <button type="button" 
+                                    wire:click.prevent="resendVerificationNotification" 
+                                    class="text-primary-600 dark:text-primary-400 hover:text-primary-500 dark:hover:text-primary-300 font-medium">
                                 {{ __('Click here to re-send the verification email.') }}
-                            </flux:link>
-                        </flux:text>
+                            </button>
+                        </p>
 
                         @if (session('status') === 'verification-link-sent')
-                            <flux:text class="mt-2 font-medium !dark:text-green-400 !text-green-600">
+                            <p class="mt-2 text-sm font-medium text-green-600 dark:text-green-400">
                                 {{ __('A new verification link has been sent to your email address.') }}
-                            </flux:text>
+                            </p>
                         @endif
                     </div>
                 @endif
             </div>
 
             <div class="flex items-center gap-4">
-                <div class="flex items-center justify-end">
-                    <flux:button variant="primary" type="submit" class="w-full">{{ __('Save') }}</flux:button>
-                </div>
+                <button type="submit" class="btn-primary">
+                    {{ __('Save') }}
+                </button>
 
-                <x-action-message class="me-3" on="profile-updated">
+                <x-action-message class="text-sm text-green-600 dark:text-green-400" on="profile-updated">
                     {{ __('Saved.') }}
                 </x-action-message>
             </div>

@@ -1,33 +1,36 @@
-<section class="w-full">
-    @include('partials.settings-heading')
+<?php
 
-    <x-settings.layout
-        :heading="__('Two Factor Authentication')"
-        :subheading="__('Manage your two-factor authentication settings')"
-    >
-        <div class="flex flex-col w-full mx-auto space-y-6 text-sm" wire:cloak>
-            @if ($twoFactorEnabled)
-                <div class="space-y-4">
-                    <div class="flex items-center gap-3">
-                        <flux:badge color="green">{{ __('Enabled') }}</flux:badge>
-                    </div>
+use Livewire\Volt\Component;
+use Laravel\Fortify\Actions\DisableTwoFactorAuthentication;
+use Laravel\Fortify\Actions\EnableTwoFactorAuthentication;
 
-                    <flux:text>
-                        {{ __('With two-factor authentication enabled, you will be prompted for a secure, random pin during login, which you can retrieve from the TOTP-supported application on your phone.') }}
-                    </flux:text>
+new class extends Component {
+    public $twoFactorEnabled = false;
+    public $requiresConfirmation = false;
 
-                    <livewire:settings.two-factor.recovery-codes :$requiresConfirmation/>
+    public function mount(): void
+    {
+        $this->twoFactorEnabled = !is_null(auth()->user()->two_factor_secret);
+        $this->requiresConfirmation = !is_null(auth()->user()->two_factor_secret) && 
+                                    is_null(auth()->user()->two_factor_confirmed_at);
+    }
 
-                    <div class="flex justify-start">
-                        <flux:button
-                            variant="danger"
-                            icon="shield-exclamation"
-                            icon:variant="outline"
-                            wire:click="disable"
-                        >
-                            {{ __('Disable 2FA') }}
-                        </flux:button>
-                    </div>
+    public function enable(): void
+    {
+        app(EnableTwoFactorAuthentication::class)(auth()->user());
+        $this->twoFactorEnabled = true;
+        $this->requiresConfirmation = true;
+    }
+
+    public function disable(): void
+    {
+        app(DisableTwoFactorAuthentication::class)(auth()->user());
+        $this->twoFactorEnabled = false;
+        $this->requiresConfirmation = false;
+    }
+}; ?>
+
+@layout('components.layouts.app')
                 </div>
             @else
                 <div class="space-y-4">
