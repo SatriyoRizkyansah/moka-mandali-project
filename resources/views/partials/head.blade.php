@@ -13,5 +13,4 @@
 @vite(['resources/css/app.css', 'resources/js/app.js'])
 @livewireStyles
 
-<!-- Alpine.js -->
-<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<!-- Alpine.js is bundled via Vite (resources/js/app.js) -->
