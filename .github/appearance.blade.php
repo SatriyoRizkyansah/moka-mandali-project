@@ -1,4 +1,4 @@
-{{-- @layout('components.layouts.app') --}}
+@layout('components.layouts.app')
 
 <section class="w-full">
     {{-- @include('partials.settings-heading') --}}

@@ -1,7 +1,7 @@
-@layout('components.layouts.app')
+{{-- @layout('components.layouts.app') --}}
 
 <section class="w-full">
-    @include('partials.settings-heading')
+    {{-- @include('partials.settings-heading') --}}
 
     <x-settings.layout :heading="__('Update password')" :subheading="__('Ensure your account is using a long, random password to stay secure')">
         <form method="POST" wire:submit="updatePassword" class="mt-6 space-y-6">

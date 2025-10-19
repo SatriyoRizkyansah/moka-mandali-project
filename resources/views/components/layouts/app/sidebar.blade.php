@@ -5,10 +5,9 @@
     </head>
     <body class="min-h-screen bg-gray-50 dark:bg-gray-900" 
           x-data="{ sidebarOpen: false }">
-        <div class="flex h-screen">
-            <!-- Sidebar -->
-            <div class="fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transform transition-transform duration-300 lg:translate-x-0"
-                 :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'">
+        <!-- Sidebar -->
+        <div class="fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transform transition-transform duration-300 lg:translate-x-0 flex flex-col"
+              :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'">
                 
                 <!-- Sidebar Header -->
                 <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
@@ -21,8 +20,8 @@
                 </div>
 
                 <!-- Navigation -->
-                <div class="flex flex-col h-full">
-                    <nav class="flex-1 px-4 py-6 space-y-2">
+                <div class="flex-1 overflow-y-auto">
+                    <nav class="px-4 py-6 space-y-2">
                         <!-- Platform Section -->
                         <div class="mb-6">
                             <h3 class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
@@ -36,9 +35,9 @@
                             </a>
                         </div>
 
-                        <!-- Spacer -->
-                        <div class="flex-1"></div>
+                        
 
+                        
                         <!-- External Links -->
                         <div class="space-y-2 pt-6 border-t border-gray-200 dark:border-gray-700">
                             <a href="https://github.com/laravel/livewire-starter-kit" 
@@ -59,57 +58,57 @@
                             </a>
                         </div>
                     </nav>
+                </div>
 
-                    <!-- Desktop User Menu -->
-                    <div class="hidden lg:block p-4 border-t border-gray-200 dark:border-gray-700">
-                        <div x-data="{ userMenuOpen: false }" class="relative">
-                            <button @click="userMenuOpen = !userMenuOpen" 
-                                    class="w-full flex items-center justify-between p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                                <div class="flex items-center space-x-3">
-                                    <div class="w-8 h-8 bg-primary-100 dark:bg-primary-900 rounded-lg flex items-center justify-center text-primary-700 dark:text-primary-300 font-semibold">
-                                        {{ auth()->user()->initials() }}
-                                    </div>
-                                    <div class="text-left">
-                                        <div class="font-medium text-gray-900 dark:text-white text-sm">{{ auth()->user()->name }}</div>
-                                        <div class="text-xs text-gray-500 dark:text-gray-400">{{ auth()->user()->email }}</div>
-                                    </div>
+                <!-- Desktop User Menu (sticky at bottom, outside scrollable area) -->
+                <div class="hidden lg:block p-4 border-t border-gray-200 dark:border-gray-700">
+                    <div x-data="{ userMenuOpen: false }" class="relative">
+                        <button @click="userMenuOpen = !userMenuOpen" 
+                                class="w-full flex items-center justify-between p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 bg-primary-100 dark:bg-primary-900 rounded-lg flex items-center justify-center text-primary-700 dark:text-primary-300 font-semibold">
+                                    {{ auth()->user()->initials() }}
                                 </div>
-                                <x-icons.chevron-down class="text-gray-400" />
-                            </button>
-
-                            <!-- User Dropdown -->
-                            <div x-show="userMenuOpen" 
-                                 @click.away="userMenuOpen = false"
-                                 x-transition:enter="transition ease-out duration-100"
-                                 x-transition:enter-start="transform opacity-0 scale-95"
-                                 x-transition:enter-end="transform opacity-100 scale-100"
-                                 x-transition:leave="transition ease-in duration-75"
-                                 x-transition:leave-start="transform opacity-100 scale-100"
-                                 x-transition:leave-end="transform opacity-0 scale-95"
-                                 class="absolute bottom-full left-0 right-0 mb-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2">
-                                
-                                <a href="{{ route('settings.profile') }}" 
-                                   wire:navigate
-                                   class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
-                                    <x-icons.cog class="mr-3" />
-                                    {{ __('Settings') }}
-                                </a>
-                                
-                                <div class="border-t border-gray-200 dark:border-gray-700 my-1"></div>
-                                
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
-                                    <button type="submit" 
-                                            class="w-full flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 text-left">
-                                        <x-icons.logout class="mr-3" />
-                                        {{ __('Log Out') }}
-                                    </button>
-                                </form>
+                                <div class="text-left">
+                                    <div class="font-medium text-gray-900 dark:text-white text-sm">{{ auth()->user()->name }}</div>
+                                    <div class="text-xs text-gray-500 dark:text-gray-400">{{ auth()->user()->email }}</div>
+                                </div>
                             </div>
+                            <x-icons.chevron-down class="text-gray-400" />
+                        </button>
+
+                        <!-- User Dropdown -->
+                        <div x-show="userMenuOpen" 
+                             @click.away="userMenuOpen = false"
+                             x-transition:enter="transition ease-out duration-100"
+                             x-transition:enter-start="transform opacity-0 scale-95"
+                             x-transition:enter-end="transform opacity-100 scale-100"
+                             x-transition:leave="transition ease-in duration-75"
+                             x-transition:leave-start="transform opacity-100 scale-100"
+                             x-transition:leave-end="transform opacity-0 scale-95"
+                             class="absolute bottom-full left-0 right-0 mb-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2">
+                            
+                            <a href="{{ route('settings.profile') }}" 
+                               wire:navigate
+                               class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                <x-icons.cog class="mr-3" />
+                                {{ __('Settings') }}
+                            </a>
+                            
+                            <div class="border-t border-gray-200 dark:border-gray-700 my-1"></div>
+                            
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" 
+                                        class="w-full flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 text-left">
+                                    <x-icons.logout class="mr-3" />
+                                    {{ __('Log Out') }}
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
-            </div>
+                </div>
 
             <!-- Main Content Area -->
             <div class="flex-1 lg:ml-64">
