@@ -190,5 +190,31 @@
              class="lg:hidden fixed inset-0 z-40 bg-black bg-opacity-50"></div>
              
         @livewireScripts
+<style>
+/* Override NProgress top loader: kuning -> oranye */
+#nprogress .bar,
+.nprogress .bar {
+  background: linear-gradient(90deg, #FEEBC8 0%, #F59E0B 100%) !important; /* pale yellow -> orange */
+  height: 3px !important;
+}
+
+#nprogress .peg,
+.nprogress .peg {
+  box-shadow: 0 0 10px #F59E0B, 0 0 5px #FEEBC8 !important;
+  opacity: 1 !important;
+  transform: rotate(3deg) translate(0px, -4px) !important;
+}
+
+/* Spinner (if used) */
+#nprogress .spinner,
+.nprogress .spinner {
+  display: none; /* sembunyikan spinner, hapus jika ingin tampilkan */
+}
+#nprogress .spinner-icon,
+.nprogress .spinner-icon {
+  border-top-color: #F59E0B !important;
+  border-left-color: #FEEBC8 !important;
+}
+</style>
     </body>
 </html>
