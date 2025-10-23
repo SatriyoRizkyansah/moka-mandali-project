@@ -33,6 +33,10 @@ Route::get('/produk', function() {
 
 // Customer Routes
 Route::middleware(['auth'])->group(function () {
+    Route::get('/checkout', function() {
+        return view('customer.checkout');
+    })->name('checkout');
+    
     Route::get('/keranjang', function() {
         return view('customer.keranjang');
     })->name('keranjang');
@@ -40,6 +44,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/pesanan', function() {
         return view('customer.pesanan');
     })->name('pesanan');
+    
+    Route::get('/pesanan/{pesananId}', function($pesananId) {
+        return view('customer.pesanan-detail', compact('pesananId'));
+    })->name('pesanan.detail');
     
     Route::get('/profile', function() {
         return view('customer.profile');
@@ -52,6 +60,7 @@ Route::middleware(['auth', 'role:admin,owner'])->prefix('admin')->name('admin.')
     Route::get('kategori', \App\Livewire\Admin\KategoriIndex::class)->name('kategori.index');
     Route::get('merk', \App\Livewire\Admin\MerkIndex::class)->name('merk.index');
     Route::get('produk', \App\Livewire\Admin\ProdukIndex::class)->name('produk.index');
+    Route::get('pesanan', \App\Livewire\Admin\PesananIndex::class)->name('pesanan.index');
 });
 
 // Redirect berdasarkan role setelah login

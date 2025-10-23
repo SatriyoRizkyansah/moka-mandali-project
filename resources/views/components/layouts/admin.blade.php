@@ -76,12 +76,13 @@
                                 {{ __('Operations') }}
                             </h3>
                             
-                            <a href="#" class="nav-item opacity-50 cursor-not-allowed">
+                            <a href="{{ route('admin.pesanan.index') }}" 
+                               class="nav-item {{ request()->routeIs('admin.pesanan.*') ? 'active' : '' }}"
+                               wire:navigate>
                                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                                 </svg>
                                 {{ __('Pesanan') }}
-                                <span class="ml-auto text-xs text-gray-400">Soon</span>
                             </a>
                             
                             <a href="#" class="nav-item opacity-50 cursor-not-allowed">
