@@ -1,0 +1,252 @@
+<div>
+    <!-- Page Header -->
+    <div class="mb-6">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            Kelola Produk
+        </h2>
+    </div>
+
+    <!-- Flash Messages -->
+        @if (session()->has('message'))
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                {{ session('message') }}
+            </div>
+        @endif
+
+        @if (session()->has('error'))
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        <!-- Header Actions -->
+        <div class="bg-white shadow rounded-lg mb-6">
+            <div class="px-4 py-5 sm:p-6">
+                <div class="flex justify-between items-center">
+                    <div class="flex-1 max-w-lg">
+                        <input type="text" wire:model.live="search" placeholder="Cari produk..." class="block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500">
+                    </div>
+                    <button wire:click="create" class="ml-4 inline-flex items-center px-4 py-2 bg-purple-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-purple-700 focus:bg-purple-700 active:bg-purple-900 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                        Tambah Produk
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="bg-white shadow rounded-lg overflow-hidden">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Foto
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Nama Produk
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Kategori / Merk
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Harga
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Stok
+                        </th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Aksi
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    @forelse($produks as $produk)
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                @if($produk->foto)
+                                    <img src="{{ asset('storage/produk/' . $produk->foto) }}" alt="{{ $produk->nama }}" class="h-12 w-12 object-cover rounded">
+                                @else
+                                    <div class="h-12 w-12 bg-gray-200 rounded flex items-center justify-center">
+                                        <svg class="h-6 w-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                    </div>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900">{{ $produk->nama }}</div>
+                                <div class="text-sm text-gray-500">{{ Str::limit($produk->deskripsi, 50) }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <div>{{ $produk->kategori->nama }}</div>
+                                <div class="text-xs text-gray-400">{{ $produk->merk->nama_merk }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                Rp {{ number_format($produk->harga, 0, ',', '.') }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $produk->stok > 10 ? 'bg-green-100 text-green-800' : ($produk->stok > 0 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
+                                    {{ $produk->stok }} unit
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <button wire:click="edit('{{ $produk->id }}')" class="text-blue-600 hover:text-blue-900 mr-2">
+                                    Edit
+                                </button>
+                                <button wire:click="delete('{{ $produk->id }}')" wire:confirm="Apakah Anda yakin ingin menghapus produk ini?" class="text-red-600 hover:text-red-900">
+                                    Hapus
+                                </button>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                                Tidak ada data produk.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+
+            <!-- Pagination -->
+            <div class="px-4 py-3 border-t border-gray-200">
+                {{ $produks->links() }}
+            </div>
+        </div>
+
+        <!-- Modal -->
+        @if($showModal)
+            <div class="fixed inset-0 z-50 overflow-y-auto">
+                <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                    <!-- Background overlay -->
+                    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" wire:click="closeModal"></div>
+
+                    <!-- This element is to trick the browser into centering the modal contents. -->
+                    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+                    <!-- Modal panel -->
+                    <div class="relative inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full" wire:click.stop>
+                        <form wire:submit="save" enctype="multipart/form-data">
+                            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                                <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
+                                    {{ $editingId ? 'Edit Produk' : 'Tambah Produk' }}
+                                </h3>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <!-- Nama Produk -->
+                                    <div class="col-span-2">
+                                        <label for="nama" class="block text-sm font-medium text-gray-700 mb-2">
+                                            Nama Produk *
+                                        </label>
+                                        <input type="text" wire:model="nama" id="nama" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500">
+                                        @error('nama') 
+                                            <span class="text-red-500 text-sm">{{ $message }}</span> 
+                                        @enderror
+                                    </div>
+
+                                    <!-- Kategori -->
+                                    <div>
+                                        <label for="kategori_id" class="block text-sm font-medium text-gray-700 mb-2">
+                                            Kategori *
+                                        </label>
+                                        <select wire:model="kategori_id" id="kategori_id" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500">
+                                            <option value="">Pilih Kategori</option>
+                                            @foreach($kategoris as $kategori)
+                                                <option value="{{ $kategori->id }}">{{ $kategori->nama }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('kategori_id') 
+                                            <span class="text-red-500 text-sm">{{ $message }}</span> 
+                                        @enderror
+                                    </div>
+
+                                    <!-- Merk -->
+                                    <div>
+                                        <label for="merk_id" class="block text-sm font-medium text-gray-700 mb-2">
+                                            Merk *
+                                        </label>
+                                        <select wire:model="merk_id" id="merk_id" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500">
+                                            <option value="">Pilih Merk</option>
+                                            @foreach($merks as $merk)
+                                                <option value="{{ $merk->id }}">{{ $merk->nama_merk }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('merk_id') 
+                                            <span class="text-red-500 text-sm">{{ $message }}</span> 
+                                        @enderror
+                                    </div>
+
+                                    <!-- Harga -->
+                                    <div>
+                                        <label for="harga" class="block text-sm font-medium text-gray-700 mb-2">
+                                            Harga (Rp) *
+                                        </label>
+                                        <input type="number" wire:model="harga" id="harga" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500">
+                                        @error('harga') 
+                                            <span class="text-red-500 text-sm">{{ $message }}</span> 
+                                        @enderror
+                                    </div>
+
+                                    <!-- Stok -->
+                                    <div>
+                                        <label for="stok" class="block text-sm font-medium text-gray-700 mb-2">
+                                            Stok *
+                                        </label>
+                                        <input type="number" wire:model="stok" id="stok" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500">
+                                        @error('stok') 
+                                            <span class="text-red-500 text-sm">{{ $message }}</span> 
+                                        @enderror
+                                    </div>
+
+                                    <!-- Deskripsi -->
+                                    <div class="col-span-2">
+                                        <label for="deskripsi" class="block text-sm font-medium text-gray-700 mb-2">
+                                            Deskripsi
+                                        </label>
+                                        <textarea wire:model="deskripsi" id="deskripsi" rows="3" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"></textarea>
+                                        @error('deskripsi') 
+                                            <span class="text-red-500 text-sm">{{ $message }}</span> 
+                                        @enderror
+                                    </div>
+
+                                    <!-- Foto -->
+                                    <div class="col-span-2">
+                                        <label for="foto" class="block text-sm font-medium text-gray-700 mb-2">
+                                            Foto Produk
+                                        </label>
+                                        <input type="file" wire:model="foto" id="foto" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100">
+                                        @error('foto') 
+                                            <span class="text-red-500 text-sm">{{ $message }}</span> 
+                                        @enderror
+                                        
+                                        @if($existing_foto && !$foto)
+                                            <div class="mt-2">
+                                                <img src="{{ asset('storage/produk/' . $existing_foto) }}" alt="Current" class="h-20 w-20 object-cover rounded">
+                                                <p class="text-xs text-gray-500 mt-1">Foto saat ini</p>
+                                            </div>
+                                        @endif
+
+                                        @if($foto)
+                                            <div class="mt-2">
+                                                <img src="{{ $foto->temporaryUrl() }}" alt="Preview" class="h-20 w-20 object-cover rounded">
+                                                <p class="text-xs text-gray-500 mt-1">Preview foto baru</p>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                                <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-purple-600 text-base font-medium text-white hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 sm:ml-3 sm:w-auto sm:text-sm">
+                                    {{ $editingId ? 'Perbarui' : 'Simpan' }}
+                                </button>
+                                <button type="button" wire:click="closeModal" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                                    Batal
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        @endif
+    </div>
+</div>

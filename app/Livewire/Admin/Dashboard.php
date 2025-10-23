@@ -8,7 +8,9 @@ use App\Models\KategoriProduk;
 use App\Models\MerkProduk;
 use App\Models\Produk;
 use App\Models\Pesanan;
+use Livewire\Attributes\Layout;
 
+#[Layout('components.layouts.admin')]
 class Dashboard extends Component
 {
     public function render()

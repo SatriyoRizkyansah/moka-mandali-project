@@ -9,30 +9,33 @@ use Illuminate\Support\Facades\Auth;
 use Laravel\Fortify\Features;
 
 Route::get('/', function () {
+    // Redirect admin ke admin dashboard jika sudah login
+    if (Auth::check() && in_array(optional(Auth::user())->role, ['admin', 'owner'])) {
+        return redirect()->route('admin.dashboard');
+    }
     return view('welcome');
 })->name('home');
 
-use App\Livewire\Dashboard;
-
-Route::get('dashboard', Dashboard::class)
+// Default dashboard untuk customer
+Route::get('dashboard', \App\Livewire\Dashboard::class)
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
-
-// Redirect berdasarkan role setelah login
-Route::get('/admin', function () {
-    if (Auth::check() && Auth::user()->hasAnyRole(['admin', 'owner'])) {
-        return redirect()->route('admin.dashboard');
-    }
-    abort(403);
-})->middleware(['auth'])->name('admin');
 
 // Admin Routes
 Route::middleware(['auth', 'role:admin,owner'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('dashboard', \App\Livewire\Admin\Dashboard::class)->name('dashboard');
     Route::get('kategori', \App\Livewire\Admin\KategoriIndex::class)->name('kategori.index');
-    // Route::get('merk', \App\Livewire\Admin\MerkIndex::class)->name('merk.index');
-    // Route::get('produk', \App\Livewire\Admin\ProdukIndex::class)->name('produk.index');
+    Route::get('merk', \App\Livewire\Admin\MerkIndex::class)->name('merk.index');
+    Route::get('produk', \App\Livewire\Admin\ProdukIndex::class)->name('produk.index');
 });
+
+// Redirect berdasarkan role setelah login
+Route::get('/admin', function () {
+    if (Auth::check() && in_array(optional(Auth::user())->role, ['admin', 'owner'])) {
+        return redirect()->route('admin.dashboard');
+    }
+    abort(403);
+})->middleware(['auth'])->name('admin');
 
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');

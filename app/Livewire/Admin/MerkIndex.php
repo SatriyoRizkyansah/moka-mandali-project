@@ -4,12 +4,12 @@ namespace App\Livewire\Admin;
 
 use Livewire\Component;
 use Livewire\WithPagination;
-use App\Models\KategoriProduk;
+use App\Models\MerkProduk;
 use Livewire\Attributes\Validate;
 use Livewire\Attributes\Layout;
 
 #[Layout('components.layouts.admin')]
-class KategoriIndex extends Component
+class MerkIndex extends Component
 {
     use WithPagination;
 
@@ -18,11 +18,11 @@ class KategoriIndex extends Component
     public $editingId = null;
     
     #[Validate('required|min:3')]
-    public $nama = '';
+    public $nama_merk = '';
 
     public function resetForm()
     {
-        $this->nama = '';
+        $this->nama_merk = '';
         $this->editingId = null;
         $this->resetErrorBag();
     }
@@ -41,9 +41,9 @@ class KategoriIndex extends Component
 
     public function edit($id)
     {
-        $kategori = KategoriProduk::findOrFail($id);
+        $merk = MerkProduk::findOrFail($id);
         $this->editingId = $id;
-        $this->nama = $kategori->nama;
+        $this->nama_merk = $merk->nama_merk;
         $this->showModal = true;
     }
 
@@ -53,17 +53,17 @@ class KategoriIndex extends Component
 
         if ($this->editingId) {
             // Update
-            $kategori = KategoriProduk::findOrFail($this->editingId);
-            $kategori->update([
-                'nama' => $this->nama
+            $merk = MerkProduk::findOrFail($this->editingId);
+            $merk->update([
+                'nama_merk' => $this->nama_merk
             ]);
-            session()->flash('message', 'Kategori berhasil diperbarui.');
+            session()->flash('message', 'Merk berhasil diperbarui.');
         } else {
             // Create
-            KategoriProduk::create([
-                'nama' => $this->nama
+            MerkProduk::create([
+                'nama_merk' => $this->nama_merk
             ]);
-            session()->flash('message', 'Kategori berhasil ditambahkan.');
+            session()->flash('message', 'Merk berhasil ditambahkan.');
         }
 
         $this->resetForm();
@@ -72,16 +72,16 @@ class KategoriIndex extends Component
 
     public function delete($id)
     {
-        $kategori = KategoriProduk::findOrFail($id);
+        $merk = MerkProduk::findOrFail($id);
         
-        // Check jika kategori memiliki produk
-        if ($kategori->produk()->count() > 0) {
-            session()->flash('error', 'Kategori tidak dapat dihapus karena masih memiliki produk.');
+        // Check jika merk memiliki produk
+        if ($merk->produk()->count() > 0) {
+            session()->flash('error', 'Merk tidak dapat dihapus karena masih memiliki produk.');
             return;
         }
 
-        $kategori->delete();
-        session()->flash('message', 'Kategori berhasil dihapus.');
+        $merk->delete();
+        session()->flash('message', 'Merk berhasil dihapus.');
     }
 
     public function updatingSearch()
@@ -91,12 +91,12 @@ class KategoriIndex extends Component
 
     public function render()
     {
-        $kategoris = KategoriProduk::where('nama', 'like', '%' . $this->search . '%')
+        $merks = MerkProduk::where('nama_merk', 'like', '%' . $this->search . '%')
             ->withCount('produk')
             ->paginate(10);
 
-        return view('livewire.admin.kategori-index', [
-            'kategoris' => $kategoris
+        return view('livewire.admin.merk-index', [
+            'merks' => $merks
         ]);
     }
 }
