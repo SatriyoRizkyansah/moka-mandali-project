@@ -13,7 +13,7 @@
                 <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
                     <a href="{{ route('admin.dashboard') }}" class="flex items-center space-x-2" wire:navigate>
                         <x-app-logo />
-                        <span class="text-lg font-bold text-gray-900 dark:text-white">Admin</span>
+                        {{-- <span class="text-lg font-bold text-gray-900 dark:text-white">Admin</span> --}}
                     </a>
                     <button @click="sidebarOpen = false" class="lg:hidden p-1 rounded-lg text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700">
                         <x-icons.x-mark />

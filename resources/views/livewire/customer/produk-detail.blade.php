@@ -20,22 +20,36 @@
                 <div class="space-y-4">
                     <!-- Main Image -->
                     <div class="aspect-w-1 aspect-h-1 bg-white rounded-lg shadow-sm overflow-hidden">
-                        <img src="{{ $produk->foto ?? 'https://via.placeholder.com/600x600?text=Velg+Motor' }}" 
+                        @php
+                            $photos = $produk->photos()->get()->pluck('path')->toArray();
+                            $mainPhoto = null;
+                            if (!empty($photos)) {
+                                $mainPhoto = Storage::url($photos[0]);
+                            } elseif (!empty($produk->primary_photo)) {
+                                $mainPhoto = Storage::url($produk->primary_photo);
+                            } elseif (!empty($produk->foto)) {
+                                $mainPhoto = Storage::url('produk/' . $produk->foto);
+                            } else {
+                                $mainPhoto = 'https://via.placeholder.com/600x600?text=Velg+Motor';
+                            }
+                        @endphp
+
+                        <img src="{{ $mainPhoto }}" 
                              alt="{{ $produk->nama }}" 
                              class="w-full h-96 object-cover">
                     </div>
                     
-                    <!-- Additional Images Placeholder -->
-                    @if($produk->foto)
+                    <!-- Additional Images -->
+                    @if(!empty($photos))
                         <div class="grid grid-cols-4 gap-2">
-                            @for($i = 0; $i < 4; $i++)
+                            @foreach($photos as $i => $p)
                                 <div class="aspect-w-1 aspect-h-1 bg-gray-100 rounded-md overflow-hidden cursor-pointer border-2 {{ $activeImageIndex === $i ? 'border-primary-500' : 'border-transparent' }}"
                                      wire:click="changeImage({{ $i }})">
-                                    <img src="{{ $produk->foto }}" 
+                                    <img src="{{ Storage::url($p) }}" 
                                          alt="{{ $produk->nama }} - Gambar {{ $i + 1 }}" 
                                          class="w-full h-20 object-cover">
                                 </div>
-                            @endfor
+                            @endforeach
                         </div>
                     @endif
                 </div>
@@ -214,9 +228,19 @@
                     
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                         @foreach($relatedProduk as $related)
+                            @php
+                                $rFirst = $related->photos()->first();
+                                if ($rFirst) {
+                                    $rThumb = Storage::url($rFirst->path);
+                                } elseif ($related->foto) {
+                                    $rThumb = Storage::url('produk/' . $related->foto);
+                                } else {
+                                    $rThumb = 'https://via.placeholder.com/200x200?text=Velg';
+                                }
+                            @endphp
                             <div class="card overflow-hidden hover:shadow-lg transition-all duration-300">
                                 <div class="aspect-w-1 aspect-h-1 bg-gray-100">
-                                    <img src="{{ $related->foto ?? 'https://via.placeholder.com/200x200?text=Velg' }}" 
+                                    <img src="{{ $rThumb }}" 
                                          alt="{{ $related->nama }}" 
                                          class="w-full h-48 object-cover">
                                 </div>

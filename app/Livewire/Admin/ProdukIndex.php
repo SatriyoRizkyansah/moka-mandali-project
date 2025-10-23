@@ -39,10 +39,15 @@ class ProdukIndex extends Component
     #[Validate('required|exists:merk_produk,id')]
     public $merk_id = '';
     
-    #[Validate('nullable|image|max:2048')]
-    public $foto;
+    // allow multiple uploads
+    #[Validate('nullable')]
+    public $fotos = [];
 
+    // existing primary foto filename (fallback for legacy column)
     public $existing_foto = '';
+
+    // existing photos collection (ProdukPhoto) to show in edit mode
+    public $existingPhotos = [];
 
     public function resetForm()
     {
@@ -52,7 +57,7 @@ class ProdukIndex extends Component
         $this->stok = '';
         $this->kategori_id = '';
         $this->merk_id = '';
-        $this->foto = null;
+        $this->fotos = [];
         $this->existing_foto = '';
         $this->editingId = null;
         $this->resetErrorBag();
@@ -81,6 +86,8 @@ class ProdukIndex extends Component
         $this->kategori_id = $produk->kategori_id;
         $this->merk_id = $produk->merk_id;
         $this->existing_foto = $produk->foto;
+        // load existing photos
+        $this->existingPhotos = $produk->photos()->get()->toArray();
         $this->showModal = true;
     }
 
@@ -97,15 +104,14 @@ class ProdukIndex extends Component
             'merk_id' => $this->merk_id,
         ];
 
-        // Handle foto upload
-        if ($this->foto) {
-            $filename = time() . '_' . $this->foto->getClientOriginalName();
-            $this->foto->storeAs('produk', $filename, 'public');
-            $data['foto'] = $filename;
-
-            // Delete old foto if editing
-            if ($this->editingId && $this->existing_foto) {
-                Storage::disk('public')->delete('produk/' . $this->existing_foto);
+        // Handle foto(s) upload - support multiple files
+        $uploadedFilenames = [];
+        if (!empty($this->fotos)) {
+            foreach ($this->fotos as $file) {
+                if (!$file) continue;
+                $filename = time() . '_' . uniqid() . '_' . $file->getClientOriginalName();
+                $file->storeAs('produk', $filename, 'public');
+                $uploadedFilenames[] = $filename;
             }
         }
 
@@ -113,10 +119,31 @@ class ProdukIndex extends Component
             // Update
             $produk = Produk::findOrFail($this->editingId);
             $produk->update($data);
+
+            // attach uploaded photos to produk_photos
+            foreach ($uploadedFilenames as $i => $filename) {
+                \App\Models\ProdukPhoto::create([
+                    'produk_id' => $produk->id,
+                    'path' => 'produk/' . $filename,
+                    'is_primary' => ($i === 0 && !$produk->photos()->where('is_primary', true)->exists()),
+                    'sort_order' => $produk->photos()->count() + $i,
+                ]);
+            }
+
             session()->flash('message', 'Produk berhasil diperbarui.');
         } else {
             // Create
-            Produk::create($data);
+            $produk = Produk::create($data);
+
+            foreach ($uploadedFilenames as $i => $filename) {
+                \App\Models\ProdukPhoto::create([
+                    'produk_id' => $produk->id,
+                    'path' => 'produk/' . $filename,
+                    'is_primary' => ($i === 0),
+                    'sort_order' => $i,
+                ]);
+            }
+
             session()->flash('message', 'Produk berhasil ditambahkan.');
         }
 
@@ -134,13 +161,42 @@ class ProdukIndex extends Component
             return;
         }
 
-        // Delete foto file
+        // Delete legacy foto file
         if ($produk->foto) {
             Storage::disk('public')->delete('produk/' . $produk->foto);
         }
 
+        // Delete produk_photos files and records
+        foreach ($produk->photos()->get() as $photo) {
+            Storage::disk('public')->delete($photo->path);
+            $photo->delete();
+        }
+
         $produk->delete();
         session()->flash('message', 'Produk berhasil dihapus.');
+    }
+
+    /**
+     * Remove an existing ProdukPhoto by id (called from UI)
+     */
+    public function removePhoto($photoId)
+    {
+        $photo = \App\Models\ProdukPhoto::find($photoId);
+        if (! $photo) {
+            session()->flash('error', 'Foto tidak ditemukan.');
+            return;
+        }
+
+        // delete file from storage
+        \Illuminate\Support\Facades\Storage::disk('public')->delete($photo->path);
+        $photo->delete();
+
+        // refresh existingPhotos if editing
+        if ($this->editingId) {
+            $this->existingPhotos = Produk::find($this->editingId)->photos()->get()->toArray();
+        }
+
+        session()->flash('message', 'Foto berhasil dihapus.');
     }
 
     public function updatingSearch()

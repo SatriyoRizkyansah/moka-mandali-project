@@ -62,8 +62,17 @@
                     @forelse($produks as $produk)
                         <tr>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                @if($produk->foto)
-                                    <img src="{{ asset('storage/produk/' . $produk->foto) }}" alt="{{ $produk->nama }}" class="h-12 w-12 object-cover rounded">
+                                @php
+                                    $thumb = null;
+                                    $first = $produk->photos()->first();
+                                    if ($first) {
+                                        $thumb = Storage::url($first->path);
+                                    } elseif ($produk->foto) {
+                                        $thumb = Storage::url('produk/' . $produk->foto);
+                                    }
+                                @endphp
+                                @if($thumb)
+                                    <img src="{{ $thumb }}" alt="{{ $produk->nama }}" class="h-12 w-12 object-cover rounded">
                                 @else
                                     <div class="h-12 w-12 bg-gray-200 rounded flex items-center justify-center">
                                         <svg class="h-6 w-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -213,22 +222,35 @@
                                         <label for="foto" class="block text-sm font-medium text-gray-700 mb-2">
                                             Foto Produk
                                         </label>
-                                        <input type="file" wire:model="foto" id="foto" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100">
-                                        @error('foto') 
+                                        <input type="file" wire:model="fotos" id="foto" accept="image/*" multiple class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100">
+                                        @error('fotos') 
                                             <span class="text-red-500 text-sm">{{ $message }}</span> 
                                         @enderror
-                                        
-                                        @if($existing_foto && !$foto)
-                                            <div class="mt-2">
-                                                <img src="{{ asset('storage/produk/' . $existing_foto) }}" alt="Current" class="h-20 w-20 object-cover rounded">
-                                                <p class="text-xs text-gray-500 mt-1">Foto saat ini</p>
+
+                                        {{-- Existing photos from produk_photos --}}
+                                        @if(!empty($existingPhotos))
+                                            <div class="mt-2 flex space-x-2 overflow-auto">
+                                                @foreach($existingPhotos as $p)
+                                                    <div class="relative">
+                                                        <img src="{{ Storage::url($p['path']) }}" alt="Foto" class="h-20 w-20 object-cover rounded">
+                                                        <button type="button" wire:click="removePhoto('{{ $p['id'] }}')" class="absolute top-0 right-0 bg-red-600 text-white rounded-full p-1 -translate-x-1/4 -translate-y-1/4">
+                                                            &times;
+                                                        </button>
+                                                    </div>
+                                                @endforeach
                                             </div>
                                         @endif
 
-                                        @if($foto)
-                                            <div class="mt-2">
-                                                <img src="{{ $foto->temporaryUrl() }}" alt="Preview" class="h-20 w-20 object-cover rounded">
-                                                <p class="text-xs text-gray-500 mt-1">Preview foto baru</p>
+                                        {{-- Preview new uploads --}}
+                                        @if(!empty($fotos))
+                                            <div class="mt-2 flex space-x-2 overflow-auto">
+                                                @foreach($fotos as $file)
+                                                    <div>
+                                                        @if($file)
+                                                            <img src="{{ $file->temporaryUrl() }}" alt="Preview" class="h-20 w-20 object-cover rounded">
+                                                        @endif
+                                                    </div>
+                                                @endforeach
                                             </div>
                                         @endif
                                     </div>
