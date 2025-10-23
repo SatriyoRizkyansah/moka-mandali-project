@@ -16,6 +16,22 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
+// Customer Routes (tidak perlu middleware auth, bisa dilihat guest)
+Route::get('/kategori/{kategori}', function() {
+    return 'Halaman kategori coming soon!';
+})->name('kategori');
+
+Route::get('/produk', function() {
+    return 'Halaman semua produk coming soon!';
+})->name('produk.semua');
+
+// Customer Routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/keranjang', \App\Livewire\Customer\Keranjang::class)->name('keranjang');
+    Route::get('/pesanan', \App\Livewire\Customer\Pesanan::class)->name('pesanan');
+    Route::get('/profile', \App\Livewire\Customer\Profile::class)->name('profile');
+});
+
 // Admin Routes
 Route::middleware(['auth', 'role:admin,owner'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('dashboard', \App\Livewire\Admin\Dashboard::class)->name('dashboard');

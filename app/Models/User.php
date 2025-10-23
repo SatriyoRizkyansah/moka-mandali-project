@@ -136,7 +136,7 @@ class User extends Authenticatable
     // Relasi
     public function pesanan()
     {
-        return $this->hasMany(Pesanan::class, 'user_id');
+        return $this->hasMany(\App\Models\Pesanan::class, 'user_id');
     }
 
     public function ulasan()
@@ -152,6 +152,23 @@ class User extends Authenticatable
     public function notifikasi()
     {
         return $this->hasMany(Notifikasi::class, 'user_id');
+    }
+
+    public function keranjangItems()
+    {
+        return $this->hasMany(\App\Models\KeranjangItem::class, 'user_id');
+    }
+
+    // Helper method untuk mendapatkan total item di keranjang
+    public function getTotalKeranjangItemsAttribute(): int
+    {
+        return $this->keranjangItems()->sum('jumlah');
+    }
+
+    // Helper method untuk mendapatkan total harga keranjang
+    public function getTotalKeranjangHargaAttribute(): float
+    {
+        return $this->keranjangItems()->get()->sum('total_harga');
     }
 }
 
