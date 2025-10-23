@@ -11,7 +11,7 @@
                 
                 <!-- Sidebar Header -->
                 <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-                    <a href="{{ route('dashboard') }}" class="flex items-center space-x-2" wire:navigate>
+                    <a href="{{ route('home') }}" class="flex items-center space-x-2" wire:navigate>
                         <x-app-logo />
                     </a>
                     <button @click="sidebarOpen = false" class="lg:hidden p-1 rounded-lg text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700">
@@ -27,11 +27,11 @@
                             <h3 class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
                                 {{ __('Platform') }}
                             </h3>
-                            <a href="{{ route('dashboard') }}" 
-                               class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}"
+                            <a href="{{ route('home') }}" 
+                               class="nav-item {{ request()->routeIs('home') ? 'active' : '' }}"
                                wire:navigate>
                                 <x-icons.home class="mr-3" />
-                                {{ __('Dashboard') }}
+                                {{ __('Home') }}
                             </a>
                         </div>
 

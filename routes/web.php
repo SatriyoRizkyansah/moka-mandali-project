@@ -16,11 +16,6 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-// Default dashboard untuk customer
-Route::get('dashboard', \App\Livewire\Dashboard::class)
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
-
 // Admin Routes
 Route::middleware(['auth', 'role:admin,owner'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('dashboard', \App\Livewire\Admin\Dashboard::class)->name('dashboard');

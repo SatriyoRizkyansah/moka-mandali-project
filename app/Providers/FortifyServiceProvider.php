@@ -31,13 +31,10 @@ class FortifyServiceProvider extends ServiceProvider
         // Custom redirect after login based on user role
         Fortify::redirects('login', function () {
             $user = Auth::user();
-            Log::info('Login redirect - User role: ' . ($user ? $user->role : 'no user'));
             
             if ($user && in_array($user->role, ['admin', 'owner'])) {
-                Log::info('Redirecting admin to: /admin/dashboard');
                 return '/admin/dashboard';
             }
-            Log::info('Redirecting customer to: /');
             return '/'; // Customer ke home page utama
         });
 
