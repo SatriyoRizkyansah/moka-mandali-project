@@ -1,6 +1,4 @@
 <div>
-    {{-- Title slot will be provided by Livewire layout() call in the component --}}
-
     <!-- Profile Header with Banner -->
     <div class="bg-gradient-to-br from-primary-500 via-primary-400 to-accent-500 relative overflow-hidden">
         <div class="absolute inset-0 bg-grid-pattern opacity-10"></div>

@@ -27,9 +27,17 @@ Route::get('/produk', function() {
 
 // Customer Routes
 Route::middleware(['auth'])->group(function () {
-    Route::get('/keranjang', \App\Livewire\Customer\Keranjang::class)->name('keranjang');
-    Route::get('/pesanan', \App\Livewire\Customer\Pesanan::class)->name('pesanan');
-    Route::get('/profile', \App\Livewire\Customer\Profile::class)->name('profile');
+    Route::get('/keranjang', function() {
+        return view('customer.keranjang');
+    })->name('keranjang');
+    
+    Route::get('/pesanan', function() {
+        return view('customer.pesanan');
+    })->name('pesanan');
+    
+    Route::get('/profile', function() {
+        return view('customer.profile');
+    })->name('profile');
 });
 
 // Admin Routes
