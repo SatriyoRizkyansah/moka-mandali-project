@@ -10,12 +10,15 @@ use Illuminate\Support\Facades\Auth;
 class AddToCart extends Component
 {
     public $produkId;
+    public $quantity;
     public $jumlah = 1;
     public $isAdding = false;
 
-    public function mount($produkId)
+    public function mount($produkId, $quantity = 1)
     {
         $this->produkId = $produkId;
+        $this->quantity = $quantity;
+        $this->jumlah = $quantity;
     }
 
     public function addToCart()
@@ -34,6 +37,9 @@ class AddToCart extends Component
             return;
         }
 
+        // Use the quantity from product detail page if available
+        $quantityToAdd = $this->quantity ?? $this->jumlah;
+
         // Cek apakah item sudah ada di keranjang
         $existingItem = KeranjangItem::where('user_id', Auth::id())
                                    ->where('produk_id', $this->produkId)
@@ -42,14 +48,14 @@ class AddToCart extends Component
         if ($existingItem) {
             // Update jumlah jika sudah ada
             $existingItem->update([
-                'jumlah' => $existingItem->jumlah + $this->jumlah
+                'jumlah' => $existingItem->jumlah + $quantityToAdd
             ]);
         } else {
             // Buat item baru
             KeranjangItem::create([
                 'user_id' => Auth::id(),
                 'produk_id' => $this->produkId,
-                'jumlah' => $this->jumlah,
+                'jumlah' => $quantityToAdd,
                 'harga_saat_ditambah' => $produk->harga
             ]);
         }

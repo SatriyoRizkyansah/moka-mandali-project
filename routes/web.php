@@ -17,9 +17,15 @@ Route::get('/', function () {
 })->name('home');
 
 // Customer Routes (tidak perlu middleware auth, bisa dilihat guest)
-Route::get('/kategori/{kategori}', function() {
-    return 'Halaman kategori coming soon!';
+Route::get('/kategori/{kategoriId}', function($kategoriId) {
+    $kategori = \App\Models\KategoriProduk::findOrFail($kategoriId);
+    return view('customer.kategori', compact('kategoriId', 'kategori'));
 })->name('kategori');
+
+Route::get('/produk/{produkId}', function($produkId) {
+    $produk = \App\Models\Produk::with(['kategori', 'merk'])->findOrFail($produkId);
+    return view('customer.produk-detail', compact('produkId', 'produk'));
+})->name('produk.detail');
 
 Route::get('/produk', function() {
     return 'Halaman semua produk coming soon!';

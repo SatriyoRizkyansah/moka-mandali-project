@@ -42,7 +42,7 @@
                                         <!-- Product Image -->
                                         <div class="flex-shrink-0">
                                             <img class="h-20 w-20 rounded-lg object-cover" 
-                                                 src="{{ $item->produk->gambar ?? 'https://via.placeholder.com/80' }}" 
+                                                 src="{{ asset('storage/produk/' . $item->produk->foto) }}"
                                                  alt="{{ $item->produk->nama }}">
                                         </div>
 
