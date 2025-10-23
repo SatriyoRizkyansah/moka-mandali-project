@@ -8,6 +8,10 @@ class Produk extends Model
 {
     protected $table = 'produk';
 
+    // UUID Configuration
+    protected $keyType = 'string';
+    public $incrementing = false;
+
     protected $fillable = [
         'kategori_id',
         'merk_id',
@@ -18,14 +22,25 @@ class Produk extends Model
         'foto',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+        
+        static::creating(function ($model) {
+            if (empty($model->id)) {
+                $model->id = (string) \Illuminate\Support\Str::uuid();
+            }
+        });
+    }
+
     public function kategori()
     {
-        return $this->belongsTo(Kategori::class, 'kategori_id');
+        return $this->belongsTo(KategoriProduk::class, 'kategori_id');
     }
 
     public function merk()
     {
-        return $this->belongsTo(Merk::class, 'merk_id');
+        return $this->belongsTo(MerkProduk::class, 'merk_id');
     }
 
     public function detailPesanan()

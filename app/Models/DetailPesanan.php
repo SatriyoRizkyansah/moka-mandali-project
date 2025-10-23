@@ -8,6 +8,10 @@ class DetailPesanan extends Model
 {
     protected $table = 'detail_pesanan';
 
+    // UUID Configuration
+    protected $keyType = 'string';
+    public $incrementing = false;
+
     protected $fillable = [
         'pesanan_id',
         'produk_id',
@@ -15,6 +19,17 @@ class DetailPesanan extends Model
         'harga_satuan',
         'subtotal',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+        
+        static::creating(function ($model) {
+            if (empty($model->id)) {
+                $model->id = (string) \Illuminate\Support\Str::uuid();
+            }
+        });
+    }
 
     public function pesanan()
     {

@@ -8,6 +8,10 @@ class Voucher extends Model
 {
     protected $table = 'voucher';
 
+    // UUID Configuration
+    protected $keyType = 'string';
+    public $incrementing = false;
+
     protected $fillable = [
         'user_id',
         'kode_voucher',
@@ -15,6 +19,17 @@ class Voucher extends Model
         'status',
         'tanggal_kadaluarsa',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+        
+        static::creating(function ($model) {
+            if (empty($model->id)) {
+                $model->id = (string) \Illuminate\Support\Str::uuid();
+            }
+        });
+    }
 
     public function user()
     {

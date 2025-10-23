@@ -4,11 +4,26 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Merk extends Model
+class MerkProduk extends Model
 {
-    protected $table = 'merk';
+    protected $table = 'merk_produk';
 
-    protected $fillable = ['nama'];
+    // UUID Configuration
+    protected $keyType = 'string';
+    public $incrementing = false;
+
+    protected $fillable = ['nama_merk'];
+
+    protected static function boot()
+    {
+        parent::boot();
+        
+        static::creating(function ($model) {
+            if (empty($model->id)) {
+                $model->id = (string) \Illuminate\Support\Str::uuid();
+            }
+        });
+    }
 
     public function produk()
     {

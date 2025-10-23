@@ -9,21 +9,20 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-        public function up(): void
-        {
-            Schema::create('merk_produk', function (Blueprint $table) {
-                $table->id();
-                $table->string('nama_merk');
-                $table->timestamps();
-            });
-        }
-
+    public function up(): void
+    {
+        Schema::create('merk_produk', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('nama_merk');
+            $table->timestamps();
+        });
+    }
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('merk_produks');
+        Schema::dropIfExists('merk_produk');
     }
 };

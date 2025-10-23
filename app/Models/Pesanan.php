@@ -8,6 +8,10 @@ class Pesanan extends Model
 {
     protected $table = 'pesanan';
 
+    // UUID Configuration
+    protected $keyType = 'string';
+    public $incrementing = false;
+
     protected $fillable = [
         'user_id',
         'total_harga',
@@ -17,6 +21,17 @@ class Pesanan extends Model
         'resi',
         'status',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+        
+        static::creating(function ($model) {
+            if (empty($model->id)) {
+                $model->id = (string) \Illuminate\Support\Str::uuid();
+            }
+        });
+    }
 
     public function user()
     {

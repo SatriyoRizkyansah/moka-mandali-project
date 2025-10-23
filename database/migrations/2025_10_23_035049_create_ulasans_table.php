@@ -9,25 +9,26 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-   public function up(): void
-{
-    Schema::create('ulasan', function (Blueprint $table) {
-        $table->id();
-        $table->foreignId('produk_id')->constrained('produk')->cascadeOnDelete();
-        $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-        $table->text('isi_ulasan')->nullable();
-        $table->integer('rating')->nullable();
-        $table->timestamps();
-    });
-}
+    public function up(): void
+    {
+        Schema::create('ulasan', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->uuid('produk_id');
+            $table->uuid('user_id');
+            $table->text('isi_ulasan')->nullable();
+            $table->integer('rating')->nullable();
+            $table->timestamps();
 
-
+            $table->foreign('produk_id')->references('id')->on('produk')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+        });
+    }
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('ulasans');
+        Schema::dropIfExists('ulasan');
     }
 };

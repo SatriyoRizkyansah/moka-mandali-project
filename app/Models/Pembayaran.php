@@ -8,6 +8,10 @@ class Pembayaran extends Model
 {
     protected $table = 'pembayaran';
 
+    // UUID Configuration
+    protected $keyType = 'string';
+    public $incrementing = false;
+
     protected $fillable = [
         'pesanan_id',
         'bukti_transfer',
@@ -15,6 +19,17 @@ class Pembayaran extends Model
         'jenis',
         'status',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+        
+        static::creating(function ($model) {
+            if (empty($model->id)) {
+                $model->id = (string) \Illuminate\Support\Str::uuid();
+            }
+        });
+    }
 
     public function pesanan()
     {
