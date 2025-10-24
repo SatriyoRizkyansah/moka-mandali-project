@@ -63,6 +63,13 @@ Route::middleware(['auth', 'role:admin,owner'])->prefix('admin')->name('admin.')
     Route::get('pesanan', \App\Livewire\Admin\PesananIndex::class)->name('pesanan.index');
 });
 
+// Owner-only Routes
+Route::middleware(['auth', 'role:owner'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('rekening-bank', function() {
+        return view('admin.rekening-bank');
+    })->name('rekening-bank.index');
+});
+
 // Redirect berdasarkan role setelah login
 Route::get('/admin', function () {
     if (Auth::check() && in_array(optional(Auth::user())->role, ['admin', 'owner'])) {

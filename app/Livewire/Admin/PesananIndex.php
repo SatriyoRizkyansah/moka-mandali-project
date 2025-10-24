@@ -118,6 +118,14 @@ class PesananIndex extends Component
         $this->selectedPembayaran = null;
     }
 
+    public function refreshData()
+    {
+        if ($this->selectedPesanan) {
+            $this->selectedPesanan = $this->selectedPesanan->fresh(['pembayaran', 'detailPesanan.produk']);
+            session()->flash('success', 'Data berhasil diperbarui!');
+        }
+    }
+
     public function render()
     {
         $query = Pesanan::with(['user', 'detailPesanan.produk'])

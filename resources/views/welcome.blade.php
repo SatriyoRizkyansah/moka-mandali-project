@@ -162,7 +162,8 @@
                     @for($i = 1; $i <= 8; $i++)
                         <div class="card overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group">
                             <div class="aspect-w-1 aspect-h-1 bg-gradient-to-br from-primary-100 to-accent-100 relative overflow-hidden">
-                                <img src="https://via.placeholder.com/300x300?text=Velg+Motor+{{ $i }}" 
+                                
+                                <img src="#" 
                                      alt="Velg Motor {{ $i }}" 
                                      class="w-full h-56 object-cover group-hover:scale-110 transition-transform duration-500">
                             </div>

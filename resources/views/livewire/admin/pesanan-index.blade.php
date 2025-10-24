@@ -126,23 +126,43 @@
 
     <!-- Modal Detail Pesanan -->
     @if($showModal && $selectedPesanan)
-        <div class="fixed inset-0 z-50 overflow-y-auto">
+        <div class="fixed inset-0 z-50 overflow-y-auto" 
+             x-data="{ show: true }"
+             x-show="show"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0">
             <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                <!-- Background overlay -->
-                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" wire:click="closeModal"></div>
+                <!-- Background overlay with blur and gradient -->
+                <div class="fixed inset-0 bg-gradient-to-br from-black/20 via-transparent to-black/30 backdrop-blur-sm transition-all duration-300" 
+                     wire:click="closeModal"></div>
 
                 <!-- This element is to trick the browser into centering the modal contents. -->
                 <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
                 <!-- Modal panel -->
-                <div class="relative inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full" wire:click.stop>
+                <div class="relative inline-block align-bottom bg-white rounded-xl text-left overflow-hidden shadow-2xl border border-gray-200/50 transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full" 
+                     wire:click.stop
+                     x-transition:enter="transition ease-out duration-300 transform"
+                     x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                     x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                     x-transition:leave="transition ease-in duration-200 transform"
+                     x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                     x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                     style="backdrop-filter: blur(1px);"
+                     >
                     <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                         <!-- Header -->
-                        <div class="flex justify-between items-center mb-6">
-                            <h3 class="text-lg leading-6 font-medium text-gray-900">
+                        <div class="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
+                            <h3 class="text-xl leading-6 font-bold text-gray-900 flex items-center">
+                                <div class="w-2 h-2 bg-blue-500 rounded-full mr-3 animate-pulse"></div>
                                 Detail Pesanan - {{ substr($selectedPesanan->id, 0, 8) }}...
                             </h3>
-                            <button wire:click="closeModal" class="text-gray-400 hover:text-gray-600">
+                            <button wire:click="closeModal" 
+                                    class="text-gray-400 hover:text-gray-600 transition-colors duration-200 p-2 hover:bg-gray-100 rounded-lg">
                                 <span class="sr-only">Tutup</span>
                                 <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -256,14 +276,32 @@
                                                 @endif
 
                                                 @if($pembayaran->status === 'menunggu_konfirmasi')
-                                                    <div class="mt-2 space-x-2">
-                                                        <button wire:click="konfirmasiPembayaran({{ $pembayaran->id }}, 'diterima')"
-                                                                class="text-xs bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700">
-                                                            Terima
+                                                    <div class="mt-3 flex space-x-2">
+                                                        <button wire:click="konfirmasiPembayaran('{{ $pembayaran->id }}', 'diterima')"
+                                                                wire:loading.attr="disabled"
+                                                                wire:target="konfirmasiPembayaran"
+                                                                class="text-xs bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-1 transition-all duration-200 transform hover:scale-105 hover:shadow-md flex items-center disabled:opacity-50 disabled:cursor-not-allowed">
+                                                            <span wire:loading.remove wire:target="konfirmasiPembayaran">
+                                                                <i class="fas fa-check mr-1"></i>
+                                                                Terima
+                                                            </span>
+                                                            <span wire:loading wire:target="konfirmasiPembayaran">
+                                                                <i class="fas fa-spinner fa-spin mr-1"></i>
+                                                                Memproses...
+                                                            </span>
                                                         </button>
-                                                        <button wire:click="konfirmasiPembayaran({{ $pembayaran->id }}, 'ditolak')"
-                                                                class="text-xs bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700">
-                                                            Tolak
+                                                        <button wire:click="konfirmasiPembayaran('{{ $pembayaran->id }}', 'ditolak')"
+                                                                wire:loading.attr="disabled"
+                                                                wire:target="konfirmasiPembayaran"
+                                                                class="text-xs bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 transition-all duration-200 transform hover:scale-105 hover:shadow-md flex items-center disabled:opacity-50 disabled:cursor-not-allowed">
+                                                            <span wire:loading.remove wire:target="konfirmasiPembayaran">
+                                                                <i class="fas fa-times mr-1"></i>
+                                                                Tolak
+                                                            </span>
+                                                            <span wire:loading wire:target="konfirmasiPembayaran">
+                                                                <i class="fas fa-spinner fa-spin mr-1"></i>
+                                                                Memproses...
+                                                            </span>
                                                         </button>
                                                     </div>
                                                 @endif
@@ -334,6 +372,22 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        
+                        <!-- Modal Footer -->
+                        <div class="bg-gray-50/50 px-6 py-4 border-t border-gray-100 flex justify-end space-x-3">
+                            <button wire:click="closeModal" 
+                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all duration-200 hover:shadow-sm">
+                                <i class="fas fa-times mr-2"></i>
+                                Tutup
+                            </button>
+                            @if($selectedPesanan->status !== 'selesai' && $selectedPesanan->status !== 'dibatalkan')
+                                <button wire:click="refreshData" 
+                                        class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 hover:shadow-md transform hover:scale-105">
+                                    <i class="fas fa-sync-alt mr-2"></i>
+                                    Refresh Data
+                                </button>
+                            @endif
                         </div>
                     </div>
                 </div>

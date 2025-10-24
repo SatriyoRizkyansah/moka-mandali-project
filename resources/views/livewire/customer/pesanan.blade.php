@@ -29,9 +29,11 @@
                         <select wire:model.live="selectedStatus" id="status"
                                 class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 rounded-md">
                             <option value="all">Semua Status</option>
-                            <option value="pending">Menunggu Pembayaran</option>
-                            <option value="diproses">Sedang Diproses</option>
-                            <option value="dikirim">Dalam Pengiriman</option>
+                            <option value="menunggu_pembayaran">Menunggu Pembayaran</option>
+                            <option value="menunggu_konfirmasi">Menunggu Konfirmasi</option>
+                            <option value="menunggu_ongkir">Menunggu Ongkir</option>
+                            <option value="menunggu_pembayaran_ongkir">Menunggu Pembayaran Ongkir</option>
+                            <option value="dikirim">Dikirim</option>
                             <option value="selesai">Selesai</option>
                             <option value="dibatalkan">Dibatalkan</option>
                         </select>
@@ -81,11 +83,11 @@
                                                 {{ $detail->produk->nama }}
                                             </h4>
                                             <p class="text-sm text-gray-500">
-                                                {{ $detail->jumlah }} x Rp {{ number_format($detail->harga, 0, ',', '.') }}
+                                                {{ $detail->jumlah }} x Rp {{ number_format($detail->harga_satuan, 0, ',', '.') }}
                                             </p>
                                         </div>
                                         <div class="text-sm font-medium text-gray-900">
-                                            Rp {{ number_format($detail->jumlah * $detail->harga, 0, ',', '.') }}
+                                            Rp {{ number_format($detail->subtotal, 0, ',', '.') }}
                                         </div>
                                     </div>
                                 @endforeach
@@ -117,14 +119,18 @@
                             <div class="mt-4 pt-4 border-t border-gray-200">
                                 <div class="flex items-center justify-between">
                                     <div class="text-sm text-gray-500">
-                                        @if($pesanan->status === 'pending')
-                                            Silakan lakukan pembayaran sebelum batas waktu
-                                        @elseif($pesanan->status === 'diproses')
-                                            Pesanan sedang diproses oleh admin
+                                        @if($pesanan->status === 'menunggu_pembayaran')
+                                            Silakan lakukan pembayaran produk untuk melanjutkan pesanan
+                                        @elseif($pesanan->status === 'menunggu_konfirmasi')
+                                            Menunggu konfirmasi pembayaran dari admin
+                                        @elseif($pesanan->status === 'menunggu_ongkir')
+                                            Admin sedang menghitung ongkos kirim
+                                        @elseif($pesanan->status === 'menunggu_pembayaran_ongkir')
+                                            Silakan lakukan pembayaran ongkos kirim
                                         @elseif($pesanan->status === 'dikirim')
                                             Pesanan dalam perjalanan ke alamat Anda
                                         @elseif($pesanan->status === 'selesai')
-                                            Pesanan telah selesai
+                                            Pesanan telah selesai diterima
                                         @elseif($pesanan->status === 'dibatalkan')
                                             Pesanan telah dibatalkan
                                         @endif
@@ -133,19 +139,26 @@
                                     <div class="flex space-x-2">
                                         @if($pesanan->status === 'selesai')
                                             <button class="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm hover:bg-indigo-700 transition duration-200">
+                                                <i class="fas fa-redo mr-1"></i>
                                                 Beli Lagi
                                             </button>
                                         @endif
                                         
-                                        @if($pesanan->status === 'pending' && !$pesanan->pembayaran)
-                                            <button class="bg-green-600 text-white px-4 py-2 rounded-md text-sm hover:bg-green-700 transition duration-200">
-                                                Bayar Sekarang
-                                            </button>
+                                        @if(in_array($pesanan->status, ['menunggu_pembayaran', 'menunggu_pembayaran_ongkir']))
+                                            <a href="{{ route('pesanan.detail', $pesanan->id) }}" 
+                                               wire:navigate
+                                               class="bg-green-600 text-white px-4 py-2 rounded-md text-sm hover:bg-green-700 transition duration-200">
+                                                <i class="fas fa-credit-card mr-1"></i>
+                                                Upload Bukti
+                                            </a>
                                         @endif
                                         
-                                        <button class="bg-gray-100 text-gray-700 px-4 py-2 rounded-md text-sm hover:bg-gray-200 transition duration-200">
+                                        <a href="{{ route('pesanan.detail', $pesanan->id) }}" 
+                                           wire:navigate
+                                           class="bg-gray-100 text-gray-700 px-4 py-2 rounded-md text-sm hover:bg-gray-200 transition duration-200">
+                                            <i class="fas fa-eye mr-1"></i>
                                             Detail
-                                        </button>
+                                        </a>
                                     </div>
                                 </div>
                             </div>

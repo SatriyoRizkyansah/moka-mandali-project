@@ -7,6 +7,7 @@ use Livewire\Attributes\Validate;
 use App\Models\KeranjangItem;
 use App\Models\Pesanan;
 use App\Models\DetailPesanan;
+use App\Models\RekeningBank;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -29,6 +30,7 @@ class Checkout extends Component
 
     public $keranjangItems = [];
     public $totalHarga = 0;
+    public $rekeningBanks = [];
 
     public function mount()
     {
@@ -37,6 +39,7 @@ class Checkout extends Component
         }
 
         $this->loadKeranjang();
+        $this->loadRekeningBanks();
         
         // Pre-fill dengan data user jika ada
         $user = Auth::user();
@@ -62,9 +65,20 @@ class Checkout extends Component
         }
     }
 
+    public function loadRekeningBanks()
+    {
+        $this->rekeningBanks = RekeningBank::aktif()->urutan()->get();
+    }
+
     public function prosesPesanan()
     {
         $this->validate();
+
+        // Validasi rekening bank tersedia
+        if (count($this->rekeningBanks) === 0) {
+            session()->flash('error', 'Rekening pembayaran belum tersedia. Silakan hubungi admin.');
+            return;
+        }
 
         if ($this->keranjangItems->count() === 0) {
             session()->flash('error', 'Keranjang kosong.');
@@ -91,7 +105,7 @@ class Checkout extends Component
                     'produk_id' => $item->produk_id,
                     'jumlah' => $item->jumlah,
                     'harga_satuan' => $item->harga_saat_ditambah,
-                    'total_harga' => $item->total_harga
+                    'subtotal' => $item->total_harga
                 ]);
             }
 

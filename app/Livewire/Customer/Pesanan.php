@@ -59,9 +59,11 @@ class Pesanan extends Component
     public function getStatusBadgeColor($status)
     {
         return match($status) {
-            'pending' => 'bg-yellow-100 text-yellow-800',
-            'diproses' => 'bg-blue-100 text-blue-800',
-            'dikirim' => 'bg-purple-100 text-purple-800',
+            'menunggu_pembayaran' => 'bg-yellow-100 text-yellow-800',
+            'menunggu_konfirmasi' => 'bg-blue-100 text-blue-800',
+            'menunggu_ongkir' => 'bg-purple-100 text-purple-800',
+            'menunggu_pembayaran_ongkir' => 'bg-orange-100 text-orange-800',
+            'dikirim' => 'bg-green-100 text-green-800',
             'selesai' => 'bg-green-100 text-green-800',
             'dibatalkan' => 'bg-red-100 text-red-800',
             default => 'bg-gray-100 text-gray-800',
@@ -71,12 +73,14 @@ class Pesanan extends Component
     public function getStatusText($status)
     {
         return match($status) {
-            'pending' => 'Menunggu Pembayaran',
-            'diproses' => 'Sedang Diproses',
-            'dikirim' => 'Dalam Pengiriman',
+            'menunggu_pembayaran' => 'Menunggu Pembayaran',
+            'menunggu_konfirmasi' => 'Menunggu Konfirmasi',
+            'menunggu_ongkir' => 'Menunggu Ongkir',
+            'menunggu_pembayaran_ongkir' => 'Menunggu Pembayaran Ongkir',
+            'dikirim' => 'Dikirim',
             'selesai' => 'Selesai',
             'dibatalkan' => 'Dibatalkan',
-            default => 'Unknown',
+            default => ucfirst(str_replace('_', ' ', $status)),
         };
     }
 }

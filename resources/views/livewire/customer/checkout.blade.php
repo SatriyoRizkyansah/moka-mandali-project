@@ -114,34 +114,103 @@
                                     <i class="fas fa-credit-card text-primary-600 mr-2"></i>
                                     Metode Pembayaran
                                 </h3>
-                                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                                    <div class="flex items-start">
-                                        <i class="fas fa-university text-blue-600 mt-1 mr-3"></i>
-                                        <div>
-                                            <h4 class="font-medium text-blue-900">Transfer Bank</h4>
-                                            <p class="text-blue-700 text-sm mt-1">
-                                                Setelah checkout, Anda akan diberikan informasi rekening untuk transfer pembayaran produk.
-                                                Kemudian admin akan menghitung ongkos kirim berdasarkan alamat pengiriman.
-                                            </p>
+                                
+                                @if(count($rekeningBanks) > 0)
+                                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                                        <div class="flex items-start">
+                                            <i class="fas fa-university text-blue-600 mt-1 mr-3"></i>
+                                            <div class="flex-1">
+                                                <h4 class="font-medium text-blue-900 mb-2">Transfer Bank</h4>
+                                                <p class="text-blue-700 text-sm mb-3">
+                                                    Setelah checkout, lakukan pembayaran ke salah satu rekening di bawah ini kemudian upload bukti transfer.
+                                                </p>
+                                                
+                                                <div class="space-y-3">
+                                                    @foreach($rekeningBanks as $rekening)
+                                                        <div class="bg-white border border-blue-200 rounded-md p-3">
+                                                            <div class="flex items-center justify-between mb-2">
+                                                                <div class="flex items-center">
+                                                                    <i class="fas fa-university text-blue-600 mr-2"></i>
+                                                                    <span class="font-semibold text-blue-900">{{ $rekening->nama_bank }}</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                                                                <div>
+                                                                    <span class="text-gray-600">Rekening:</span>
+                                                                    <span class="font-mono font-medium text-gray-900">{{ $rekening->formatted_nomor_rekening }}</span>
+                                                                </div>
+                                                                <div>
+                                                                    <span class="text-gray-600">Atas Nama:</span>
+                                                                    <span class="font-medium text-gray-900">{{ $rekening->nama_pemilik }}</span>
+                                                                </div>
+                                                            </div>
+                                                            @if($rekening->keterangan)
+                                                                <div class="mt-2 text-xs text-gray-600 italic">
+                                                                    {{ $rekening->keterangan }}
+                                                                </div>
+                                                            @endif
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                                
+                                                <div class="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+                                                    <div class="flex items-start">
+                                                        <i class="fas fa-info-circle text-yellow-600 mt-0.5 mr-2 text-sm"></i>
+                                                        <div class="text-xs text-yellow-800">
+                                                            <p class="font-medium mb-1">Catatan Penting:</p>
+                                                            <ul class="list-disc list-inside space-y-1">
+                                                                <li>Transfer sesuai dengan jumlah total yang tertera</li>
+                                                                <li>Simpan bukti transfer untuk di-upload nanti</li>
+                                                                <li>Admin akan menghitung ongkir setelah pembayaran dikonfirmasi</li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                @else
+                                    <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                                        <div class="flex items-start">
+                                            <i class="fas fa-exclamation-triangle text-red-600 mt-1 mr-3"></i>
+                                            <div>
+                                                <h4 class="font-medium text-red-900">Rekening Belum Tersedia</h4>
+                                                <p class="text-red-700 text-sm mt-1">
+                                                    Maaf, saat ini belum ada rekening yang tersedia untuk pembayaran. 
+                                                    Silakan hubungi admin untuk informasi lebih lanjut.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
                             </div>
 
                             <!-- Submit Button -->
                             <div class="border-t pt-6">
-                                <button type="submit" 
-                                        wire:loading.attr="disabled"
-                                        class="w-full btn-primary text-lg py-3">
-                                    <span wire:loading.remove>
-                                        <i class="fas fa-shopping-cart mr-2"></i>
-                                        Buat Pesanan
-                                    </span>
-                                    <span wire:loading>
-                                        <i class="fas fa-spinner fa-spin mr-2"></i>
-                                        Memproses...
-                                    </span>
-                                </button>
+                                @if(count($rekeningBanks) > 0)
+                                    <button type="submit" 
+                                            wire:loading.attr="disabled"
+                                            class="w-full btn-primary text-lg py-3">
+                                        <span wire:loading.remove>
+                                            <i class="fas fa-shopping-cart mr-2"></i>
+                                            Buat Pesanan
+                                        </span>
+                                        <span wire:loading>
+                                            <i class="fas fa-spinner fa-spin mr-2"></i>
+                                            Memproses...
+                                        </span>
+                                    </button>
+                                @else
+                                    <button type="button" 
+                                            disabled
+                                            class="w-full bg-gray-300 text-gray-500 cursor-not-allowed text-lg py-3 rounded-md">
+                                        <i class="fas fa-ban mr-2"></i>
+                                        Tidak Dapat Membuat Pesanan
+                                    </button>
+                                    <p class="text-red-600 text-sm mt-2 text-center">
+                                        Rekening pembayaran belum tersedia
+                                    </p>
+                                @endif
                             </div>
                         </form>
                     </div>
