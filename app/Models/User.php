@@ -159,6 +159,11 @@ class User extends Authenticatable
         return $this->hasMany(\App\Models\KeranjangItem::class, 'user_id');
     }
 
+    public function pesanChat()
+    {
+        return $this->hasMany(\App\Models\PesanChat::class, 'pengguna_id');
+    }
+
     // Helper method untuk mendapatkan total item di keranjang
     public function getTotalKeranjangItemsAttribute(): int
     {

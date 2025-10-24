@@ -61,6 +61,9 @@ Route::middleware(['auth', 'role:admin,owner'])->prefix('admin')->name('admin.')
     Route::get('merk', \App\Livewire\Admin\MerkIndex::class)->name('merk.index');
     Route::get('produk', \App\Livewire\Admin\ProdukIndex::class)->name('produk.index');
     Route::get('pesanan', \App\Livewire\Admin\PesananIndex::class)->name('pesanan.index');
+    Route::get('chat', function() {
+        return view('admin.chat');
+    })->name('chat.index');
 });
 
 // Owner-only Routes

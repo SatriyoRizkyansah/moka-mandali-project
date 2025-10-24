@@ -98,6 +98,24 @@ class PesananDetail extends Component
         $this->bukti_transfer_ongkir = null;
     }
 
+    public function selesaikanPesanan()
+    {
+        if ($this->pesanan->status !== 'dikirim') {
+            session()->flash('error', 'Pesanan hanya bisa diselesaikan saat status "Dikirim".');
+            return;
+        }
+
+        $this->pesanan->update([
+            'status' => 'selesai',
+            'tanggal_selesai' => now()
+        ]);
+
+        session()->flash('success', 'Pesanan telah diselesaikan. Terima kasih!');
+        
+        // Refresh data
+        $this->mount($this->pesanan->id);
+    }
+
     public function render()
     {
         return view('livewire.customer.pesanan-detail');

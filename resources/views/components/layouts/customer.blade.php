@@ -195,6 +195,13 @@
         </div>
     </footer>
 
+    <!-- Chat Widget Global untuk Customer -->
+    @auth
+        @if(auth()->user()->isCustomer())
+            <livewire:customer.chat-global />
+        @endif
+    @endauth
+
     @livewireScripts
 </body>
 </html>

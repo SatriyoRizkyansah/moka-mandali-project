@@ -294,6 +294,30 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Tombol Selesaikan Pesanan -->
+                        @if($pesanan->status === 'dikirim')
+                            <div class="mt-6 pt-6 border-t">
+                                <div class="bg-green-50 rounded-lg p-4">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <h4 class="font-medium text-green-900">Pesanan Sudah Diterima?</h4>
+                                            <p class="text-sm text-green-700 mt-1">
+                                                Klik tombol di samping jika pesanan sudah diterima dengan baik
+                                            </p>
+                                        </div>
+                                        <button 
+                                            wire:click="selesaikanPesanan"
+                                            wire:confirm="Apakah Anda yakin pesanan sudah diterima dengan baik? Tindakan ini tidak dapat dibatalkan."
+                                            class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors duration-200"
+                                        >
+                                            <i class="fas fa-check mr-2"></i>
+                                            Selesaikan Pesanan
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>

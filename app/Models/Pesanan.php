@@ -25,6 +25,7 @@ class Pesanan extends Model
         'bukti_ongkir',
         'resi',
         'status',
+        'tanggal_selesai',
     ];
 
     protected static function boot()
@@ -51,5 +52,10 @@ class Pesanan extends Model
     public function pembayaran()
     {
         return $this->hasMany(Pembayaran::class, 'pesanan_id');
+    }
+
+    public function pesanChat()
+    {
+        return $this->hasMany(PesanChat::class, 'pesanan_id')->urutkanTerbaru();
     }
 }

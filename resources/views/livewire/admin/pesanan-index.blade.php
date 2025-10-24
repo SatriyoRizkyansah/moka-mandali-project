@@ -371,6 +371,12 @@
                                         @endif
                                     </div>
                                 </div>
+
+                                <!-- Chat dengan Customer -->
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-900 mb-2">Chat dengan Customer</h4>
+                                    <livewire:admin.chat-pesanan :pesanan-id="$selectedPesanan->id" />
+                                </div>
                             </div>
                         </div>
                         
