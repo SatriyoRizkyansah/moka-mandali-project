@@ -1,5 +1,3 @@
-@extends('components.layouts.admin')
-
-@section('content')
+<x-layouts.admin>
     @livewire('admin.rekening-bank-index')
-@endsection
+</x-layouts.admin>

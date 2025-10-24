@@ -1,3 +1,6 @@
+@php
+    use Illuminate\Support\Facades\Storage;
+@endphp
 <div>
     <div class="min-h-screen bg-gray-50 py-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -41,8 +44,19 @@
                                     <div class="p-6 flex items-center space-x-4">
                                         <!-- Product Image -->
                                         <div class="flex-shrink-0">
+                                            @php
+                                                $imageSrc = null;
+                                                $primaryPhoto = $item->produk->photos()->where('is_primary', true)->first();
+                                                if ($primaryPhoto) {
+                                                    $imageSrc = Storage::url($primaryPhoto->path);
+                                                } elseif ($item->produk->foto) {
+                                                    $imageSrc = Storage::url('produk/' . $item->produk->foto);
+                                                } else {
+                                                    $imageSrc = 'https://via.placeholder.com/400x400/E5E7EB/9CA3AF?text=Velg+Motor';
+                                                }
+                                            @endphp
                                             <img class="h-20 w-20 rounded-lg object-cover" 
-                                                 src="{{ asset('storage/produk/' . $item->produk->foto) }}"
+                                                 src="{{ $imageSrc }}"
                                                  alt="{{ $item->produk->nama }}">
                                         </div>
 

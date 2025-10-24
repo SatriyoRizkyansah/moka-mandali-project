@@ -1,3 +1,6 @@
+@php
+    use Illuminate\Support\Facades\Storage;
+@endphp
 <x-layouts.customer>
     <x-slot name="title">Moka Madali Velg Motor Premium</x-slot>
 
@@ -113,7 +116,18 @@
                 @forelse($produkTerbaru as $produk)
                     <div class="card overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group">
                         <div class="aspect-w-1 aspect-h-1 bg-gradient-to-br from-primary-100 to-accent-100 relative overflow-hidden">
-                            <img src="{{ asset('storage/produk/' . $produk->foto) }}"
+                            @php
+                                $imageSrc = null;
+                                $primaryPhoto = $produk->photos()->where('is_primary', true)->first();
+                                if ($primaryPhoto) {
+                                    $imageSrc = Storage::url($primaryPhoto->path);
+                                } elseif ($produk->foto) {
+                                    $imageSrc = Storage::url('produk/' . $produk->foto);
+                                } else {
+                                    $imageSrc = 'https://via.placeholder.com/400x400/E5E7EB/9CA3AF?text=Velg+Motor';
+                                }
+                            @endphp
+                            <img src="{{ $imageSrc }}"
                                  alt="{{ $produk->nama }}" 
                                  class="w-full h-56 object-cover group-hover:scale-110 transition-transform duration-500">
                             

@@ -1,3 +1,6 @@
+@php
+    use Illuminate\Support\Facades\Storage;
+@endphp
 <div>
     <div class="min-h-screen bg-gray-50 py-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -74,8 +77,19 @@
                                 @foreach($pesanan->detailPesanan as $detail)
                                     <div class="flex items-center space-x-4">
                                         <div class="flex-shrink-0">
+                                            @php
+                                                $imageSrc = null;
+                                                $primaryPhoto = $detail->produk->photos()->where('is_primary', true)->first();
+                                                if ($primaryPhoto) {
+                                                    $imageSrc = Storage::url($primaryPhoto->path);
+                                                } elseif ($detail->produk->foto) {
+                                                    $imageSrc = Storage::url('produk/' . $detail->produk->foto);
+                                                } else {
+                                                    $imageSrc = 'https://via.placeholder.com/64x64/E5E7EB/9CA3AF?text=Velg+Motor';
+                                                }
+                                            @endphp
                                             <img class="h-16 w-16 rounded-lg object-cover" 
-                                                 src="{{ $detail->produk->gambar ?? 'https://via.placeholder.com/64' }}" 
+                                                 src="{{ $imageSrc }}" 
                                                  alt="{{ $detail->produk->nama }}">
                                         </div>
                                         <div class="flex-1 min-w-0">

@@ -75,7 +75,18 @@
                         @foreach($produk as $item)
                             <div class="card overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group">
                                 <div class="aspect-w-1 aspect-h-1 bg-gradient-to-br from-primary-100 to-accent-100 relative overflow-hidden">
-                                    <img src="{{ $item->foto ?? 'https://via.placeholder.com/300x300?text=Velg+Motor' }}" 
+                                    @php
+                                        $imageSrc = null;
+                                        $primaryPhoto = $item->photos()->where('is_primary', true)->first();
+                                        if ($primaryPhoto) {
+                                            $imageSrc = Storage::url($primaryPhoto->path);
+                                        } elseif ($item->foto) {
+                                            $imageSrc = Storage::url('produk/' . $item->foto);
+                                        } else {
+                                            $imageSrc = 'https://via.placeholder.com/300x300?text=Velg+Motor';
+                                        }
+                                    @endphp
+                                    <img src="{{ $imageSrc }}" 
                                          alt="{{ $item->nama }}" 
                                          class="w-full h-56 object-cover group-hover:scale-110 transition-transform duration-500">
                                     
