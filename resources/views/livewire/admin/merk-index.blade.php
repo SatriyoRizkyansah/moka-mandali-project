@@ -91,16 +91,32 @@
 
         <!-- Modal -->
         @if($showModal)
-            <div class="fixed inset-0 z-50 overflow-y-auto">
+            <div class="fixed inset-0 z-50 overflow-y-auto"
+                 x-data="{ show: true }"
+                 x-show="show"
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0">
                 <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                    <!-- Background overlay -->
-                    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" wire:click="closeModal"></div>
+                    <!-- Background overlay with gradient + blur -->
+                    <div class="fixed inset-0 bg-gradient-to-br from-black/20 via-transparent to-black/30 backdrop-blur-sm transition-all duration-300" wire:click="closeModal"></div>
 
                     <!-- This element is to trick the browser into centering the modal contents. -->
                     <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
                     <!-- Modal panel -->
-                    <div class="relative inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full" wire:click.stop>
+                    <div class="relative inline-block align-bottom bg-white rounded-xl text-left overflow-hidden shadow-2xl border border-gray-200/50 transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
+                         wire:click.stop
+                         x-transition:enter="transition ease-out duration-300 transform"
+                         x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                         x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                         x-transition:leave="transition ease-in duration-200 transform"
+                         x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                         x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                         style="backdrop-filter: blur(1px);">
                         <form wire:submit="save">
                             <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                                 <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
